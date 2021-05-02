@@ -1,9 +1,12 @@
 """Support for sensors through the SmartThings cloud API."""
+from __future__ import annotations
+
 from collections import namedtuple
-from typing import Optional, Sequence
+from collections.abc import Sequence
 
 from pysmartthings import Attribute, Capability
 
+from homeassistant.components.sensor import SensorEntity
 from homeassistant.const import (
     AREA_SQUARE_METERS,
     CONCENTRATION_PARTS_PER_MILLION,
@@ -235,7 +238,10 @@ CAPABILITY_TO_SENSORS = {
         )
     ],
     Capability.three_axis: [],
-    Capability.tv_channel: [Map(Attribute.tv_channel, "Tv Channel", None, None)],
+    Capability.tv_channel: [
+        Map(Attribute.tv_channel, "Tv Channel", None, None),
+        Map(Attribute.tv_channel_name, "Tv Channel Name", None, None),
+    ],
     Capability.tvoc_measurement: [
         Map(
             Attribute.tvoc_level,
@@ -294,14 +300,14 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     async_add_entities(sensors)
 
 
-def get_capabilities(capabilities: Sequence[str]) -> Optional[Sequence[str]]:
+def get_capabilities(capabilities: Sequence[str]) -> Sequence[str] | None:
     """Return all capabilities supported if minimum required are present."""
     return [
         capability for capability in CAPABILITY_TO_SENSORS if capability in capabilities
     ]
 
 
-class SmartThingsSensor(SmartThingsEntity):
+class SmartThingsSensor(SmartThingsEntity, SensorEntity):
     """Define a SmartThings Sensor."""
 
     def __init__(
@@ -341,7 +347,7 @@ class SmartThingsSensor(SmartThingsEntity):
         return UNITS.get(unit, unit) if unit else self._default_unit
 
 
-class SmartThingsThreeAxisSensor(SmartThingsEntity):
+class SmartThingsThreeAxisSensor(SmartThingsEntity, SensorEntity):
     """Define a SmartThings Three Axis Sensor."""
 
     def __init__(self, device, index):
@@ -352,12 +358,12 @@ class SmartThingsThreeAxisSensor(SmartThingsEntity):
     @property
     def name(self) -> str:
         """Return the name of the binary sensor."""
-        return "{} {}".format(self._device.label, THREE_AXIS_NAMES[self._index])
+        return f"{self._device.label} {THREE_AXIS_NAMES[self._index]}"
 
     @property
     def unique_id(self) -> str:
         """Return a unique ID."""
-        return "{}.{}".format(self._device.device_id, THREE_AXIS_NAMES[self._index])
+        return f"{self._device.device_id}.{THREE_AXIS_NAMES[self._index]}"
 
     @property
     def state(self):

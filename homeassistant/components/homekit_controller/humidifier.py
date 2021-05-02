@@ -1,7 +1,8 @@
 """Support for HomeKit Controller humidifier."""
-from typing import List, Optional
+from __future__ import annotations
 
 from aiohomekit.model.characteristics import CharacteristicsTypes
+from aiohomekit.model.services import ServicesTypes
 
 from homeassistant.components.humidifier import HumidifierEntity
 from homeassistant.components.humidifier.const import (
@@ -68,14 +69,14 @@ class HomeKitHumidifier(HomeKitEntity, HumidifierEntity):
         await self.async_put_characteristics({CharacteristicsTypes.ACTIVE: False})
 
     @property
-    def target_humidity(self) -> Optional[int]:
+    def target_humidity(self) -> int | None:
         """Return the humidity we try to reach."""
         return self.service.value(
             CharacteristicsTypes.RELATIVE_HUMIDITY_HUMIDIFIER_THRESHOLD
         )
 
     @property
-    def mode(self) -> Optional[str]:
+    def mode(self) -> str | None:
         """Return the current mode, e.g., home, auto, baby.
 
         Requires SUPPORT_MODES.
@@ -86,7 +87,7 @@ class HomeKitHumidifier(HomeKitEntity, HumidifierEntity):
         return MODE_AUTO if mode == 1 else MODE_NORMAL
 
     @property
-    def available_modes(self) -> Optional[List[str]]:
+    def available_modes(self) -> list[str] | None:
         """Return a list of available modes.
 
         Requires SUPPORT_MODES.
@@ -174,14 +175,14 @@ class HomeKitDehumidifier(HomeKitEntity, HumidifierEntity):
         await self.async_put_characteristics({CharacteristicsTypes.ACTIVE: False})
 
     @property
-    def target_humidity(self) -> Optional[int]:
+    def target_humidity(self) -> int | None:
         """Return the humidity we try to reach."""
         return self.service.value(
             CharacteristicsTypes.RELATIVE_HUMIDITY_DEHUMIDIFIER_THRESHOLD
         )
 
     @property
-    def mode(self) -> Optional[str]:
+    def mode(self) -> str | None:
         """Return the current mode, e.g., home, auto, baby.
 
         Requires SUPPORT_MODES.
@@ -192,7 +193,7 @@ class HomeKitDehumidifier(HomeKitEntity, HumidifierEntity):
         return MODE_AUTO if mode == 1 else MODE_NORMAL
 
     @property
-    def available_modes(self) -> Optional[List[str]]:
+    def available_modes(self) -> list[str] | None:
         """Return a list of available modes.
 
         Requires SUPPORT_MODES.
@@ -253,51 +254,22 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     hkid = config_entry.data["AccessoryPairingID"]
     conn = hass.data[KNOWN_DEVICES][hkid]
 
-    def get_accessory(conn, aid):
-        for acc in conn.accessories:
-            if acc.get("aid") == aid:
-                return acc
-        return None
-
-    def get_service(acc, iid):
-        for serv in acc.get("services"):
-            if serv.get("iid") == iid:
-                return serv
-        return None
-
-    def get_char(serv, iid):
-        try:
-            type_name = CharacteristicsTypes[iid]
-            type_uuid = CharacteristicsTypes.get_uuid(type_name)
-            for char in serv.get("characteristics"):
-                if char.get("type") == type_uuid:
-                    return char
-        except KeyError:
-            return None
-        return None
-
     @callback
-    def async_add_service(aid, service):
-        if service["stype"] != "humidifier-dehumidifier":
+    def async_add_service(service):
+        if service.short_type != ServicesTypes.HUMIDIFIER_DEHUMIDIFIER:
             return False
-        info = {"aid": aid, "iid": service["iid"]}
 
-        acc = get_accessory(conn, aid)
-        serv = get_service(acc, service["iid"])
+        info = {"aid": service.accessory.aid, "iid": service.iid}
 
-        if (
-            get_char(serv, CharacteristicsTypes.RELATIVE_HUMIDITY_HUMIDIFIER_THRESHOLD)
-            is not None
-        ):
-            async_add_entities([HomeKitHumidifier(conn, info)], True)
+        entities = []
 
-        if (
-            get_char(
-                serv, CharacteristicsTypes.RELATIVE_HUMIDITY_DEHUMIDIFIER_THRESHOLD
-            )
-            is not None
-        ):
-            async_add_entities([HomeKitDehumidifier(conn, info)], True)
+        if service.has(CharacteristicsTypes.RELATIVE_HUMIDITY_HUMIDIFIER_THRESHOLD):
+            entities.append(HomeKitHumidifier(conn, info))
+
+        if service.has(CharacteristicsTypes.RELATIVE_HUMIDITY_DEHUMIDIFIER_THRESHOLD):
+            entities.append(HomeKitDehumidifier(conn, info))
+
+        async_add_entities(entities, True)
 
         return True
 

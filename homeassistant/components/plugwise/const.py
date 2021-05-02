@@ -2,7 +2,9 @@
 DOMAIN = "plugwise"
 
 SENSOR_PLATFORMS = ["sensor", "switch"]
-ALL_PLATFORMS = ["binary_sensor", "climate", "sensor", "switch"]
+PLATFORMS_GATEWAY = ["binary_sensor", "climate", "sensor", "switch"]
+PW_TYPE = "plugwise_type"
+GATEWAY = "gateway"
 
 # Sensor mapping
 SENSOR_MAP_DEVICE_CLASS = 2
@@ -20,7 +22,6 @@ DEFAULT_SCAN_INTERVAL = {"power": 10, "stretch": 60, "thermostat": 60}
 DEFAULT_TIMEOUT = 60
 
 # Configuration directives
-CONF_BASE = "base"
 CONF_GAS = "gas"
 CONF_MAX_TEMP = "max_temp"
 CONF_MIN_TEMP = "min_temp"
@@ -42,6 +43,8 @@ FLOW_OFF_ICON = "mdi:water-pump-off"
 FLOW_ON_ICON = "mdi:water-pump"
 IDLE_ICON = "mdi:circle-off-outline"
 SWITCH_ICON = "mdi:electric-switch"
+NO_NOTIFICATION_ICON = "mdi:mailbox-outline"
+NOTIFICATION_ICON = "mdi:mailbox-up-outline"
 
 COORDINATOR = "coordinator"
 UNDO_UPDATE_LISTENER = "undo_update_listener"

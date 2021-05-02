@@ -29,12 +29,10 @@ KEY_TOKEN_SECRET = "token_secret"
 _LOGGER = logging.getLogger(__name__)
 
 
-@config_entries.HANDLERS.register("tellduslive")
-class FlowHandler(config_entries.ConfigFlow):
+class FlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow."""
 
     VERSION = 1
-    CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_POLL
 
     def __init__(self):
         """Init config flow."""
@@ -87,7 +85,7 @@ class FlowHandler(config_entries.ConfigFlow):
                     title=host,
                     data={
                         CONF_HOST: host,
-                        KEY_SCAN_INTERVAL: self._scan_interval.seconds,
+                        KEY_SCAN_INTERVAL: self._scan_interval.total_seconds(),
                         KEY_SESSION: session,
                     },
                 )
@@ -97,12 +95,12 @@ class FlowHandler(config_entries.ConfigFlow):
             with async_timeout.timeout(10):
                 auth_url = await self.hass.async_add_executor_job(self._get_auth_url)
             if not auth_url:
-                return self.async_abort(reason="authorize_url_fail")
+                return self.async_abort(reason="unknown_authorize_url_generation")
         except asyncio.TimeoutError:
             return self.async_abort(reason="authorize_url_timeout")
         except Exception:  # pylint: disable=broad-except
             _LOGGER.exception("Unexpected error generating auth url")
-            return self.async_abort(reason="authorize_url_fail")
+            return self.async_abort(reason="unknown_authorize_url_generation")
 
         _LOGGER.debug("Got authorization URL %s", auth_url)
         return self.async_show_form(
@@ -152,7 +150,7 @@ class FlowHandler(config_entries.ConfigFlow):
             title=host,
             data={
                 CONF_HOST: host,
-                KEY_SCAN_INTERVAL: self._scan_interval.seconds,
+                KEY_SCAN_INTERVAL: self._scan_interval.total_seconds(),
                 KEY_SESSION: next(iter(conf.values())),
             },
         )

@@ -1,9 +1,9 @@
 """Test the epson config flow."""
+from unittest.mock import patch
+
 from homeassistant import config_entries, setup
 from homeassistant.components.epson.const import DOMAIN
 from homeassistant.const import CONF_HOST, CONF_NAME, CONF_PORT, STATE_UNAVAILABLE
-
-from tests.async_mock import patch
 
 
 async def test_form(hass):
@@ -20,8 +20,6 @@ async def test_form(hass):
         "homeassistant.components.epson.Projector.get_property",
         return_value="04",
     ), patch(
-        "homeassistant.components.epson.async_setup", return_value=True
-    ) as mock_setup, patch(
         "homeassistant.components.epson.async_setup_entry",
         return_value=True,
     ) as mock_setup_entry:
@@ -33,7 +31,6 @@ async def test_form(hass):
     assert result2["title"] == "test-epson"
     assert result2["data"] == {CONF_HOST: "1.1.1.1", CONF_PORT: 80}
     await hass.async_block_till_done()
-    assert len(mock_setup.mock_calls) == 1
     assert len(mock_setup_entry.mock_calls) == 1
 
 
@@ -61,7 +58,7 @@ async def test_import(hass):
     with patch(
         "homeassistant.components.epson.Projector.get_property",
         return_value="04",
-    ), patch("homeassistant.components.epson.async_setup", return_value=True), patch(
+    ), patch(
         "homeassistant.components.epson.async_setup_entry",
         return_value=True,
     ):
