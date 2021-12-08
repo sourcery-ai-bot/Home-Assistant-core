@@ -1528,7 +1528,7 @@ class AlexaRangeController(AlexaCapability):
                 if index == max_value:
                     labels.append(AlexaGlobalCatalog.VALUE_MAXIMUM)
 
-                if len(labels) > 0:
+                if labels:
                     self._resource.add_preset(value=index, labels=labels)
 
             return self._resource.serialize_capability_resources()
@@ -1933,14 +1933,14 @@ class AlexaEqualizerController(AlexaCapability):
 
     def configurations(self):
         """Return the sound modes supported in the configurations object."""
-        configurations = None
         supported_sound_modes = self.get_valid_inputs(
             self.entity.attributes.get(media_player.ATTR_SOUND_MODE_LIST, [])
         )
-        if supported_sound_modes:
-            configurations = {"modes": {"supported": supported_sound_modes}}
-
-        return configurations
+        return (
+            {"modes": {"supported": supported_sound_modes}}
+            if supported_sound_modes
+            else None
+        )
 
     @classmethod
     def get_valid_inputs(cls, sound_mode_list):

@@ -357,42 +357,42 @@ class WeatherUpdateCoordinator(DataUpdateCoordinator):
         }
 
     def _get_daily_forecast_from_weather_response(self, weather_response, now):
-        if weather_response.daily:
-            parse = False
-            forecast = []
-            for day in weather_response.daily[ATTR_DATA][0][AEMET_ATTR_FORECAST][
-                AEMET_ATTR_DAY
-            ]:
-                day_date = dt_util.parse_datetime(day[AEMET_ATTR_DATE])
-                if now.date() == day_date.date():
-                    parse = True
-                if parse:
-                    cur_forecast = self._convert_forecast_day(day_date, day)
-                    if cur_forecast:
-                        forecast.append(cur_forecast)
-            return forecast
-        return None
+        if not weather_response.daily:
+            return None
+        parse = False
+        forecast = []
+        for day in weather_response.daily[ATTR_DATA][0][AEMET_ATTR_FORECAST][
+            AEMET_ATTR_DAY
+        ]:
+            day_date = dt_util.parse_datetime(day[AEMET_ATTR_DATE])
+            if now.date() == day_date.date():
+                parse = True
+            if parse:
+                cur_forecast = self._convert_forecast_day(day_date, day)
+                if cur_forecast:
+                    forecast.append(cur_forecast)
+        return forecast
 
     def _get_hourly_forecast_from_weather_response(self, weather_response, now):
-        if weather_response.hourly:
-            parse = False
-            hour = now.hour
-            forecast = []
-            for day in weather_response.hourly[ATTR_DATA][0][AEMET_ATTR_FORECAST][
-                AEMET_ATTR_DAY
-            ]:
-                day_date = dt_util.parse_datetime(day[AEMET_ATTR_DATE])
-                hour_start = 0
-                if now.date() == day_date.date():
-                    parse = True
-                    hour_start = now.hour
-                if parse:
-                    for hour in range(hour_start, 24):
-                        cur_forecast = self._convert_forecast_hour(day_date, day, hour)
-                        if cur_forecast:
-                            forecast.append(cur_forecast)
-            return forecast
-        return None
+        if not weather_response.hourly:
+            return None
+        parse = False
+        hour = now.hour
+        forecast = []
+        for day in weather_response.hourly[ATTR_DATA][0][AEMET_ATTR_FORECAST][
+            AEMET_ATTR_DAY
+        ]:
+            day_date = dt_util.parse_datetime(day[AEMET_ATTR_DATE])
+            hour_start = 0
+            if now.date() == day_date.date():
+                parse = True
+                hour_start = now.hour
+            if parse:
+                for hour in range(hour_start, 24):
+                    cur_forecast = self._convert_forecast_hour(day_date, day, hour)
+                    if cur_forecast:
+                        forecast.append(cur_forecast)
+        return forecast
 
     def _convert_forecast_day(self, date, day):
         condition = self._get_condition_day(day)

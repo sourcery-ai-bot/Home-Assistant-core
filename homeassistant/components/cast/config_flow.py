@@ -78,9 +78,7 @@ class FlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             if not bad_hosts:
                 return self.async_create_entry(title="Google Cast", data=data)
 
-        fields = {}
-        fields[vol.Optional(CONF_KNOWN_HOSTS, default="")] = str
-
+        fields = {vol.Optional(CONF_KNOWN_HOSTS, default=""): str}
         return self.async_show_form(
             step_id="config", data_schema=vol.Schema(fields), errors=errors
         )
@@ -158,10 +156,7 @@ class CastOptionsFlowHandler(config_entries.OptionsFlow):
 
 
 def _list_to_string(items):
-    comma_separated_string = ""
-    if items:
-        comma_separated_string = ",".join(items)
-    return comma_separated_string
+    return ",".join(items) if items else ""
 
 
 def _string_to_list(string, schema):

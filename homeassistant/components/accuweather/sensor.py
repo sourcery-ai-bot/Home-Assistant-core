@@ -32,9 +32,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     coordinator = hass.data[DOMAIN][config_entry.entry_id][COORDINATOR]
 
-    sensors = []
-    for sensor in SENSOR_TYPES:
-        sensors.append(AccuWeatherSensor(name, sensor, coordinator))
+    sensors = [
+        AccuWeatherSensor(name, sensor, coordinator) for sensor in SENSOR_TYPES
+    ]
 
     if coordinator.forecast:
         for sensor in FORECAST_SENSOR_TYPES:

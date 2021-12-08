@@ -31,22 +31,19 @@ TRIGGER_SCHEMA = TRIGGER_BASE_SCHEMA.extend(
 async def async_get_triggers(hass: HomeAssistant, device_id: str) -> list[dict]:
     """List device triggers for Arcam FMJ Receiver control devices."""
     registry = await entity_registry.async_get_registry(hass)
-    triggers = []
-
-    # Get all the integrations entities for this device
-    for entry in entity_registry.async_entries_for_device(registry, device_id):
-        if entry.domain == "media_player":
-            triggers.append(
-                {
-                    CONF_PLATFORM: "device",
-                    CONF_DEVICE_ID: device_id,
-                    CONF_DOMAIN: DOMAIN,
-                    CONF_ENTITY_ID: entry.entity_id,
-                    CONF_TYPE: "turn_on",
-                }
-            )
-
-    return triggers
+    return [
+        {
+            CONF_PLATFORM: "device",
+            CONF_DEVICE_ID: device_id,
+            CONF_DOMAIN: DOMAIN,
+            CONF_ENTITY_ID: entry.entity_id,
+            CONF_TYPE: "turn_on",
+        }
+        for entry in entity_registry.async_entries_for_device(
+            registry, device_id
+        )
+        if entry.domain == "media_player"
+    ]
 
 
 async def async_attach_trigger(

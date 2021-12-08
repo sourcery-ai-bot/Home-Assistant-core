@@ -24,9 +24,7 @@ class AmbientStationFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     async def _show_form(self, errors=None):
         """Show the form to the user."""
         return self.async_show_form(
-            step_id="user",
-            data_schema=self.data_schema,
-            errors=errors if errors else {},
+            step_id="user", data_schema=self.data_schema, errors=errors or {}
         )
 
     async def async_step_import(self, import_config):

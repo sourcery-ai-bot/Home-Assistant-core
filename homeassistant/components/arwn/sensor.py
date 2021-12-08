@@ -26,10 +26,7 @@ def discover_sensors(topic, payload):
     domain = parts[1]
     if domain == "temperature":
         name = parts[2]
-        if unit == "F":
-            unit = TEMP_FAHRENHEIT
-        else:
-            unit = TEMP_CELSIUS
+        unit = TEMP_FAHRENHEIT if unit == "F" else TEMP_CELSIUS
         return ArwnSensor(topic, name, "temp", unit)
     if domain == "moisture":
         name = f"{parts[2]} Moisture"

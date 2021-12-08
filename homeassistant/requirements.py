@@ -172,6 +172,10 @@ def pip_kwargs(config_dir: str | None) -> dict[str, Any]:
     }
     if "WHEELS_LINKS" in os.environ:
         kwargs["find_links"] = os.environ["WHEELS_LINKS"]
-    if not (config_dir is None or pkg_util.is_virtual_env()) and not is_docker:
+    if (
+        config_dir is not None
+        and not pkg_util.is_virtual_env()
+        and not is_docker
+    ):
         kwargs["target"] = os.path.join(config_dir, "deps")
     return kwargs

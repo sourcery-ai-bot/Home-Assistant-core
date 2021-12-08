@@ -100,6 +100,4 @@ async def test_location(client, api_key, latitude, longitude, use_nearest=False)
 
     current = measurements.current
 
-    if current["indexes"][0]["description"] == NO_AIRLY_SENSORS:
-        return False
-    return True
+    return current["indexes"][0]["description"] != NO_AIRLY_SENSORS

@@ -31,9 +31,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
 
     pins = config[CONF_PINS]
 
-    switches = []
-    for pinnum, pin in pins.items():
-        switches.append(ArduinoSwitch(pinnum, pin, board))
+    switches = [ArduinoSwitch(pinnum, pin, board) for pinnum, pin in pins.items()]
     add_entities(switches)
 
 

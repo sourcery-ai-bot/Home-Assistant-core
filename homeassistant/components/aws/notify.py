@@ -140,18 +140,13 @@ class AWSLambda(AWSNotify):
         json_payload = json.dumps(payload)
 
         async with self.session.create_client(
-            self.service, **self.aws_config
-        ) as client:
-            tasks = []
-            for target in kwargs.get(ATTR_TARGET, []):
-                tasks.append(
-                    client.invoke(
+                self.service, **self.aws_config
+            ) as client:
+            tasks = [client.invoke(
                         FunctionName=target,
                         Payload=json_payload,
                         ClientContext=self.context,
-                    )
-                )
-
+                    ) for target in kwargs.get(ATTR_TARGET, [])]
             if tasks:
                 await asyncio.gather(*tasks)
 
@@ -175,19 +170,14 @@ class AWSSNS(AWSNotify):
         subject = kwargs.get(ATTR_TITLE, ATTR_TITLE_DEFAULT)
 
         async with self.session.create_client(
-            self.service, **self.aws_config
-        ) as client:
-            tasks = []
-            for target in kwargs.get(ATTR_TARGET, []):
-                tasks.append(
-                    client.publish(
+                self.service, **self.aws_config
+            ) as client:
+            tasks = [client.publish(
                         TargetArn=target,
                         Message=message,
                         Subject=subject,
                         MessageAttributes=message_attributes,
-                    )
-                )
-
+                    ) for target in kwargs.get(ATTR_TARGET, [])]
             if tasks:
                 await asyncio.gather(*tasks)
 
@@ -207,25 +197,17 @@ class AWSSQS(AWSNotify):
         message_body = {"message": message}
         message_body.update(cleaned_kwargs)
         json_body = json.dumps(message_body)
-        message_attributes = {}
-        for key, val in cleaned_kwargs.items():
-            message_attributes[key] = {
+        message_attributes = {key: {
                 "StringValue": json.dumps(val),
                 "DataType": "String",
-            }
-
+            } for key, val in cleaned_kwargs.items()}
         async with self.session.create_client(
-            self.service, **self.aws_config
-        ) as client:
-            tasks = []
-            for target in kwargs.get(ATTR_TARGET, []):
-                tasks.append(
-                    client.send_message(
+                self.service, **self.aws_config
+            ) as client:
+            tasks = [client.send_message(
                         QueueUrl=target,
                         MessageBody=json_body,
                         MessageAttributes=message_attributes,
-                    )
-                )
-
+                    ) for target in kwargs.get(ATTR_TARGET, [])]
             if tasks:
                 await asyncio.gather(*tasks)

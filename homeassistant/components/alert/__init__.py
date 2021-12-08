@@ -301,10 +301,9 @@ class Alert(ToggleEntity):
 
         if self._title_template is not None:
             title = self._title_template.async_render(parse_result=False)
-            msg_payload.update({ATTR_TITLE: title})
+            msg_payload[ATTR_TITLE] = title
         if self._data:
-            msg_payload.update({ATTR_DATA: self._data})
-
+            msg_payload[ATTR_DATA] = self._data
         _LOGGER.debug(msg_payload)
 
         for target in self._notifiers:

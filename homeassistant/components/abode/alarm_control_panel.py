@@ -37,14 +37,13 @@ class AbodeAlarm(AbodeDevice, alarm.AlarmControlPanelEntity):
     def state(self):
         """Return the state of the device."""
         if self._device.is_standby:
-            state = STATE_ALARM_DISARMED
+            return STATE_ALARM_DISARMED
         elif self._device.is_away:
-            state = STATE_ALARM_ARMED_AWAY
+            return STATE_ALARM_ARMED_AWAY
         elif self._device.is_home:
-            state = STATE_ALARM_ARMED_HOME
+            return STATE_ALARM_ARMED_HOME
         else:
-            state = None
-        return state
+            return None
 
     @property
     def code_arm_required(self):

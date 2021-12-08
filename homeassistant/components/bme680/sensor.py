@@ -114,11 +114,10 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     if sensor_handler is None:
         return
 
-    dev = []
-    for variable in config[CONF_MONITORED_CONDITIONS]:
-        dev.append(
-            BME680Sensor(sensor_handler, variable, SENSOR_TYPES[variable][1], name)
-        )
+    dev = [
+        BME680Sensor(sensor_handler, variable, SENSOR_TYPES[variable][1], name)
+        for variable in config[CONF_MONITORED_CONDITIONS]
+    ]
 
     async_add_entities(dev)
     return

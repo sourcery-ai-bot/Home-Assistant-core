@@ -80,8 +80,5 @@ class AveaLight(LightEntity):
         """
         brightness = self._light.get_brightness()
         if brightness is not None:
-            if brightness == 0:
-                self._state = False
-            else:
-                self._state = True
+            self._state = brightness != 0
             self._brightness = round(255 * (brightness / 4095))

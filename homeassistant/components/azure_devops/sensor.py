@@ -38,8 +38,6 @@ async def async_setup_entry(
     client = hass.data[instance_key][DATA_AZURE_DEVOPS_CLIENT]
     organization = entry.data[DATA_ORG]
     project = entry.data[DATA_PROJECT]
-    sensors = []
-
     try:
         builds: list[DevOpsBuild] = await client.get_builds(
             organization, project, BUILDS_QUERY
@@ -48,10 +46,11 @@ async def async_setup_entry(
         _LOGGER.warning(exception)
         raise PlatformNotReady from exception
 
-    for build in builds:
-        sensors.append(
-            AzureDevOpsLatestBuildSensor(client, organization, project, build)
-        )
+    sensors = [
+        AzureDevOpsLatestBuildSensor(client, organization, project, build)
+        for build in builds
+    ]
+
 
     async_add_entities(sensors, True)
 

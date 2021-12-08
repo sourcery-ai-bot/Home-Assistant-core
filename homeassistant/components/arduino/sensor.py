@@ -23,9 +23,11 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
 
     pins = config[CONF_PINS]
 
-    sensors = []
-    for pinnum, pin in pins.items():
-        sensors.append(ArduinoSensor(pin.get(CONF_NAME), pinnum, CONF_TYPE, board))
+    sensors = [
+        ArduinoSensor(pin.get(CONF_NAME), pinnum, CONF_TYPE, board)
+        for pinnum, pin in pins.items()
+    ]
+
     add_entities(sensors)
 
 

@@ -11,10 +11,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up Abode lock devices."""
     data = hass.data[DOMAIN]
 
-    entities = []
+    entities = [
+        AbodeLock(data, device)
+        for device in data.abode.get_devices(generic_type=CONST.TYPE_LOCK)
+    ]
 
-    for device in data.abode.get_devices(generic_type=CONST.TYPE_LOCK):
-        entities.append(AbodeLock(data, device))
 
     async_add_entities(entities)
 

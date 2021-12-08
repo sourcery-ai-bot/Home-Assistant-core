@@ -579,8 +579,8 @@ class ConfigEntriesFlowManager(data_entry_flow.FlowManager):
         flow = cast(ConfigFlow, flow)
 
         # Remove notification if no other discovery config entries in progress
-        if not any(
-            ent["context"]["source"] in DISCOVERY_SOURCES
+        if all(
+            ent["context"]["source"] not in DISCOVERY_SOURCES
             for ent in self.hass.config_entries.flow.async_progress()
             if ent["flow_id"] != flow.flow_id
         ):
@@ -1247,8 +1247,8 @@ class ConfigFlow(data_entry_flow.FlowHandler):
     ) -> data_entry_flow.FlowResult:
         """Abort the config flow."""
         # Remove reauth notification if no reauth flows are in progress
-        if self.source == SOURCE_REAUTH and not any(
-            ent["context"]["source"] == SOURCE_REAUTH
+        if self.source == SOURCE_REAUTH and all(
+            ent["context"]["source"] != SOURCE_REAUTH
             for ent in self.hass.config_entries.flow.async_progress()
             if ent["flow_id"] != self.flow_id
         ):
@@ -1444,13 +1444,12 @@ def _handle_entry_updated_filter(event: Event) -> bool:
     Only handle changes to "disabled_by".
     If "disabled_by" was DISABLED_CONFIG_ENTRY, reload is not needed.
     """
-    if (
-        event.data["action"] != "update"
-        or "disabled_by" not in event.data["changes"]
-        or event.data["changes"]["disabled_by"] == entity_registry.DISABLED_CONFIG_ENTRY
-    ):
-        return False
-    return True
+    return (
+        event.data["action"] == "update"
+        and "disabled_by" in event.data["changes"]
+        and event.data["changes"]["disabled_by"]
+        != entity_registry.DISABLED_CONFIG_ENTRY
+    )
 
 
 async def support_entry_unload(hass: HomeAssistant, domain: str) -> bool:

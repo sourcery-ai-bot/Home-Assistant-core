@@ -81,16 +81,9 @@ class BboxDeviceScanner(DeviceScanner):
         result = box.get_all_connected_devices()
 
         now = dt_util.now()
-        last_results = []
-        for device in result:
-            if device["active"] != 1:
-                continue
-            last_results.append(
-                Device(
+        last_results = [Device(
                     device["macaddress"], device["hostname"], device["ipaddress"], now
-                )
-            )
-
+                ) for device in result if device["active"] == 1]
         self.last_results = last_results
 
         _LOGGER.info("Scan successful")

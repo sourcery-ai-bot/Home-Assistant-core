@@ -34,9 +34,7 @@ class BMWDeviceTracker(BMWConnectedDriveBaseEntity, TrackerEntity):
         super().__init__(account, vehicle)
 
         self._unique_id = vehicle.vin
-        self._location = (
-            vehicle.state.gps_position if vehicle.state.gps_position else (None, None)
-        )
+        self._location = vehicle.state.gps_position or (None, None)
         self._name = vehicle.name
 
     @property

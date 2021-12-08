@@ -166,8 +166,9 @@ class TrustedNetworksAuthProvider(AuthProvider):
         if not self.trusted_networks:
             raise InvalidAuthError("trusted_networks is not configured")
 
-        if not any(
-            ip_addr in trusted_network for trusted_network in self.trusted_networks
+        if all(
+            ip_addr not in trusted_network
+            for trusted_network in self.trusted_networks
         ):
             raise InvalidAuthError("Not in trusted_networks")
 

@@ -175,9 +175,7 @@ class WebDavCalendarData:
             vevent = event.instance.vevent
             if not self.is_matching(vevent, self.search):
                 continue
-            uid = None
-            if hasattr(vevent, "uid"):
-                uid = vevent.uid.value
+            uid = vevent.uid.value if hasattr(vevent, "uid") else None
             data = {
                 "uid": uid,
                 "summary": vevent.summary.value,
@@ -323,12 +321,10 @@ class WebDavCalendarData:
     def get_end_date(obj):
         """Return the end datetime as determined by dtend or duration."""
         if hasattr(obj, "dtend"):
-            enddate = obj.dtend.value
+            return obj.dtend.value
 
         elif hasattr(obj, "duration"):
-            enddate = obj.dtstart.value + obj.duration.value
+            return obj.dtstart.value + obj.duration.value
 
         else:
-            enddate = obj.dtstart.value + timedelta(days=1)
-
-        return enddate
+            return obj.dtstart.value + timedelta(days=1)

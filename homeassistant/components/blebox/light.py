@@ -65,7 +65,7 @@ class BleBoxLightEntity(BleBoxEntity, LightEntity):
         if rgbw_hex is None:
             return None
 
-        rgb = rgb_hex_to_rgb_list(rgbw_hex)[0:3]
+        rgb = rgb_hex_to_rgb_list(rgbw_hex)[:3]
         return color_RGB_to_hs(*rgb)
 
     async def async_turn_on(self, **kwargs):

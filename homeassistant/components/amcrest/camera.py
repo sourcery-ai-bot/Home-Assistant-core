@@ -347,24 +347,19 @@ class AmcrestCam(Camera):
 
     def update(self):
         """Update entity status."""
-        if not self.available or self._update_succeeded:
-            if not self.available:
-                self._update_succeeded = False
+        if not self.available:
+            self._update_succeeded = False
+            return
+        elif self._update_succeeded:
             return
         _LOGGER.debug("Updating %s camera", self.name)
         try:
             if self._brand is None:
                 resp = self._api.vendor_information.strip()
-                if resp.startswith("vendor="):
-                    self._brand = resp.split("=")[-1]
-                else:
-                    self._brand = "unknown"
+                self._brand = resp.split("=")[-1] if resp.startswith("vendor=") else "unknown"
             if self._model is None:
                 resp = self._api.device_type.strip()
-                if resp.startswith("type="):
-                    self._model = resp.split("=")[-1]
-                else:
-                    self._model = "unknown"
+                self._model = resp.split("=")[-1] if resp.startswith("type=") else "unknown"
             self.is_streaming = self._get_video()
             self._is_recording = self._get_recording()
             self._motion_detection_enabled = self._get_motion_detection()

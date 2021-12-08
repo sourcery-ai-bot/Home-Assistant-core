@@ -794,11 +794,10 @@ def custom_integration_warning(integration: Integration) -> None:
         _LOGGER.error(
             CUSTOM_WARNING_VERSION_MISSING, integration.domain, integration.domain
         )
-    else:
-        if not validate_custom_integration_version(integration.manifest["version"]):
-            _LOGGER.error(
-                CUSTOM_WARNING_VERSION_TYPE,
-                integration.manifest["version"],
-                integration.domain,
-                integration.domain,
-            )
+    elif not validate_custom_integration_version(integration.manifest["version"]):
+        _LOGGER.error(
+            CUSTOM_WARNING_VERSION_TYPE,
+            integration.manifest["version"],
+            integration.domain,
+            integration.domain,
+        )

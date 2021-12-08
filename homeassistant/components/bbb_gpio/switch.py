@@ -28,9 +28,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     """Set up the BeagleBone Black GPIO devices."""
     pins = config[CONF_PINS]
 
-    switches = []
-    for pin, params in pins.items():
-        switches.append(BBBGPIOSwitch(pin, params))
+    switches = [BBBGPIOSwitch(pin, params) for pin, params in pins.items()]
     add_entities(switches)
 
 

@@ -740,8 +740,7 @@ class CastDevice(MediaPlayerEntity):
 
         Returns value from homeassistant.util.dt.utcnow().
         """
-        media_status_recevied = self._media_status()[1]
-        return media_status_recevied
+        return self._media_status()[1]
 
     @property
     def unique_id(self) -> str | None:

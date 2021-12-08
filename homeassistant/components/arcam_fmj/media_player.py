@@ -265,7 +265,7 @@ class ArcamFmj(MediaPlayerEntity):
             for preset in presets.values()
         ]
 
-        root = BrowseMedia(
+        return BrowseMedia(
             title="Root",
             media_class=MEDIA_CLASS_DIRECTORY,
             media_content_id="root",
@@ -274,8 +274,6 @@ class ArcamFmj(MediaPlayerEntity):
             can_expand=True,
             children=radio,
         )
-
-        return root
 
     async def async_play_media(self, media_type: str, media_id: str, **kwargs) -> None:
         """Play media."""
@@ -344,50 +342,38 @@ class ArcamFmj(MediaPlayerEntity):
     def media_content_type(self):
         """Content type of current playing media."""
         source = self._state.get_source()
-        if source == SourceCodes.DAB:
-            value = MEDIA_TYPE_MUSIC
-        elif source == SourceCodes.FM:
-            value = MEDIA_TYPE_MUSIC
-        else:
-            value = None
-        return value
+        return (
+            MEDIA_TYPE_MUSIC
+            if source in [SourceCodes.DAB, SourceCodes.FM]
+            else None
+        )
 
     @property
     def media_content_id(self):
         """Content type of current playing media."""
         source = self._state.get_source()
-        if source in (SourceCodes.DAB, SourceCodes.FM):
-            preset = self._state.get_tuner_preset()
-            if preset:
-                value = f"preset:{preset}"
-            else:
-                value = None
-        else:
-            value = None
+        if source not in (SourceCodes.DAB, SourceCodes.FM):
+            return None
 
-        return value
+        preset = self._state.get_tuner_preset()
+        return f"preset:{preset}" if preset else None
 
     @property
     def media_channel(self):
         """Channel currently playing."""
         source = self._state.get_source()
         if source == SourceCodes.DAB:
-            value = self._state.get_dab_station()
+            return self._state.get_dab_station()
         elif source == SourceCodes.FM:
-            value = self._state.get_rds_information()
+            return self._state.get_rds_information()
         else:
-            value = None
-        return value
+            return None
 
     @property
     def media_artist(self):
         """Artist of current playing media, music track only."""
         source = self._state.get_source()
-        if source == SourceCodes.DAB:
-            value = self._state.get_dls_pdt()
-        else:
-            value = None
-        return value
+        return self._state.get_dls_pdt() if source == SourceCodes.DAB else None
 
     @property
     def media_title(self):
@@ -398,8 +384,4 @@ class ArcamFmj(MediaPlayerEntity):
 
         channel = self.media_channel
 
-        if channel:
-            value = f"{source.name} - {channel}"
-        else:
-            value = source.name
-        return value
+        return f"{source.name} - {channel}" if channel else source.name

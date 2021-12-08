@@ -109,7 +109,4 @@ class BloomSkySensor(SensorEntity):
 
         state = self._bloomsky.devices[self._device_id]["Data"][self._sensor_name]
 
-        if self._sensor_name in FORMAT_NUMBERS:
-            self._state = f"{state:.2f}"
-        else:
-            self._state = state
+        self._state = f"{state:.2f}" if self._sensor_name in FORMAT_NUMBERS else state

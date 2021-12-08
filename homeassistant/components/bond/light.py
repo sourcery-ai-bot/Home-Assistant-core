@@ -131,10 +131,9 @@ class BondLight(BondBaseLight, BondEntity, LightEntity):
     @property
     def brightness(self) -> int | None:
         """Return the brightness of this light between 1..255."""
-        brightness_value = (
+        return (
             round(self._brightness * 255 / 100) if self._brightness else None
         )
-        return brightness_value
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn on the light."""

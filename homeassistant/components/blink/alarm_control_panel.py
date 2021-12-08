@@ -20,9 +20,11 @@ async def async_setup_entry(hass, config, async_add_entities):
     """Set up the Blink Alarm Control Panels."""
     data = hass.data[DOMAIN][config.entry_id]
 
-    sync_modules = []
-    for sync_name, sync_module in data.sync.items():
-        sync_modules.append(BlinkSyncModule(data, sync_name, sync_module))
+    sync_modules = [
+        BlinkSyncModule(data, sync_name, sync_module)
+        for sync_name, sync_module in data.sync.items()
+    ]
+
     async_add_entities(sync_modules)
 
 
@@ -75,10 +77,7 @@ class BlinkSyncModule(AlarmControlPanelEntity):
         _LOGGER.debug("Updating Blink Alarm Control Panel %s", self._name)
         self.data.refresh()
         mode = self.sync.arm
-        if mode:
-            self._state = STATE_ALARM_ARMED_AWAY
-        else:
-            self._state = STATE_ALARM_DISARMED
+        self._state = STATE_ALARM_ARMED_AWAY if mode else STATE_ALARM_DISARMED
 
     def alarm_disarm(self, code=None):
         """Send disarm command."""

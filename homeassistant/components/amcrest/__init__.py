@@ -322,9 +322,7 @@ def setup(hass, config):
         return entity_ids
 
     async def async_service_handler(call):
-        args = []
-        for arg in CAMERA_SERVICES[call.service][2]:
-            args.append(call.data[arg])
+        args = [call.data[arg] for arg in CAMERA_SERVICES[call.service][2]]
         for entity_id in await async_extract_from_service(call):
             async_dispatcher_send(hass, service_signal(call.service, entity_id), *args)
 

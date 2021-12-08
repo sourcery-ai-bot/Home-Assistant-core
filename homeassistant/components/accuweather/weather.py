@@ -135,8 +135,7 @@ class AccuWeatherEntity(CoordinatorEntity, WeatherEntity):
         """Return the forecast array."""
         if not self.coordinator.forecast:
             return None
-        # remap keys from library to keys understood by the weather component
-        forecast = [
+        return [
             {
                 ATTR_FORECAST_TIME: utc_from_timestamp(item["EpochDate"]).isoformat(),
                 ATTR_FORECAST_TEMP: item["TemperatureMax"]["Value"],
@@ -158,7 +157,6 @@ class AccuWeatherEntity(CoordinatorEntity, WeatherEntity):
             }
             for item in self.coordinator.data[ATTR_FORECAST]
         ]
-        return forecast
 
     @staticmethod
     def _calc_precipitation(day: dict) -> float:

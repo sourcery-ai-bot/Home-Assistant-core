@@ -25,10 +25,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up Abode light devices."""
     data = hass.data[DOMAIN]
 
-    entities = []
+    entities = [
+        AbodeLight(data, device)
+        for device in data.abode.get_devices(generic_type=CONST.TYPE_LIGHT)
+    ]
 
-    for device in data.abode.get_devices(generic_type=CONST.TYPE_LIGHT):
-        entities.append(AbodeLight(data, device))
 
     async_add_entities(entities)
 

@@ -166,11 +166,9 @@ class BroadlinkFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         except OSError as err:
             if err.errno == errno.ENETUNREACH:
                 errors["base"] = "cannot_connect"
-                err_msg = str(err)
             else:
                 errors["base"] = "unknown"
-                err_msg = str(err)
-
+            err_msg = str(err)
         else:
             await self.async_set_unique_id(device.mac.hex())
             if self.source == config_entries.SOURCE_IMPORT:
@@ -243,11 +241,9 @@ class BroadlinkFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             except OSError as err:
                 if err.errno == errno.ENETUNREACH:
                     errors["base"] = "cannot_connect"
-                    err_msg = str(err)
                 else:
                     errors["base"] = "unknown"
-                    err_msg = str(err)
-
+                err_msg = str(err)
             else:
                 return await self.async_step_finish()
 

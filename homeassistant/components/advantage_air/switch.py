@@ -15,10 +15,14 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     instance = hass.data[ADVANTAGE_AIR_DOMAIN][config_entry.entry_id]
 
-    entities = []
-    for ac_key, ac_device in instance["coordinator"].data["aircons"].items():
-        if ac_device["info"]["freshAirStatus"] != "none":
-            entities.append(AdvantageAirFreshAir(instance, ac_key))
+    entities = [
+        AdvantageAirFreshAir(instance, ac_key)
+        for ac_key, ac_device in instance["coordinator"]
+        .data["aircons"]
+        .items()
+        if ac_device["info"]["freshAirStatus"] != "none"
+    ]
+
     async_add_entities(entities)
 
 

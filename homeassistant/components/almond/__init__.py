@@ -198,15 +198,15 @@ async def _configure_almond_for_ha(
                     "hassUrl": hass_url,
                     "accessToken": access_token,
                     "refreshToken": "",
-                    # 5 years from now in ms.
-                    "accessTokenExpires": (time.time() + 60 * 60 * 24 * 365 * 5) * 1000,
+                    "accessTokenExpires": (
+                        time.time() + 60 ** 2 * 24 * 365 * 5
+                    )
+                    * 1000,
                 }
             )
+
     except (asyncio.TimeoutError, ClientError) as err:
-        if isinstance(err, asyncio.TimeoutError):
-            msg = "Request timeout"
-        else:
-            msg = err
+        msg = "Request timeout" if isinstance(err, asyncio.TimeoutError) else err
         _LOGGER.warning("Unable to configure Almond: %s", msg)
         await hass.auth.async_remove_refresh_token(refresh_token)
         raise ConfigEntryNotReady from err

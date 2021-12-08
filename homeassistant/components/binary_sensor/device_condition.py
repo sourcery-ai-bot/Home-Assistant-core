@@ -247,10 +247,7 @@ def async_condition_from_config(
     if config_validation:
         config = CONDITION_SCHEMA(config)
     condition_type = config[CONF_TYPE]
-    if condition_type in IS_ON:
-        stat = "on"
-    else:
-        stat = "off"
+    stat = "on" if condition_type in IS_ON else "off"
     state_config = {
         condition.CONF_CONDITION: "state",
         condition.CONF_ENTITY_ID: config[CONF_ENTITY_ID],

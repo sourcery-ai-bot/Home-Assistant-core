@@ -357,10 +357,7 @@ class BluesoundPlayer(MediaPlayerEntity):
 
             if response.status == HTTP_OK:
                 result = await response.text()
-                if result:
-                    data = xmltodict.parse(result)
-                else:
-                    data = None
+                data = xmltodict.parse(result) if result else None
             elif response.status == 595:
                 _LOGGER.info("Status 595 returned, treating as timeout")
                 raise BluesoundPlayer._TimeoutException()
@@ -381,13 +378,8 @@ class BluesoundPlayer(MediaPlayerEntity):
         """Use the poll session to always get the status of the player."""
         response = None
 
-        url = "Status"
-        etag = ""
-        if self._status is not None:
-            etag = self._status.get("@etag", "")
-
-        if etag != "":
-            url = f"Status?etag={etag}&timeout=120.0"
+        etag = self._status.get("@etag", "") if self._status is not None else ""
+        url = f"Status?etag={etag}&timeout=120.0" if etag != "" else "Status"
         url = f"http://{self.host}:{self.port}/{url}"
 
         _LOGGER.debug("Calling URL: %s", url)
@@ -689,16 +681,9 @@ class BluesoundPlayer(MediaPlayerEntity):
         if self._status is None or (self.is_grouped and not self.is_master):
             return None
 
-        sources = []
+        sources = [source["title"] for source in self._preset_items]
 
-        for source in self._preset_items:
-            sources.append(source["title"])
-
-        for source in [
-            x
-            for x in self._services_items
-            if x["type"] == "LocalMusic" or x["type"] == "RadioService"
-        ]:
+        for source in [x for x in self._services_items if x["type"] in ["LocalMusic", "RadioService"]]:
             sources.append(source["title"])
 
         for source in self._capture_items:

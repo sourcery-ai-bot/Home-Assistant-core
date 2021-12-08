@@ -49,10 +49,7 @@ class AcmedaCover(AcmedaBase, CoverEntity):
 
         None is unknown, 0 is closed, 100 is fully open.
         """
-        position = None
-        if self.roller.type != 7:
-            position = 100 - self.roller.closed_percent
-        return position
+        return 100 - self.roller.closed_percent if self.roller.type != 7 else None
 
     @property
     def current_cover_tilt_position(self):
@@ -60,10 +57,11 @@ class AcmedaCover(AcmedaBase, CoverEntity):
 
         None is unknown, 0 is closed, 100 is fully open.
         """
-        position = None
-        if self.roller.type in [7, 10]:
-            position = 100 - self.roller.closed_percent
-        return position
+        return (
+            100 - self.roller.closed_percent
+            if self.roller.type in [7, 10]
+            else None
+        )
 
     @property
     def supported_features(self):

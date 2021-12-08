@@ -193,11 +193,7 @@ class BroadlinkRemote(RemoteEntity, RestoreEntity):
                 except KeyError as err:
                     raise ValueError(f"Command not found: {repr(cmd)}") from err
 
-                if isinstance(codes, list):
-                    codes = codes[:]
-                else:
-                    codes = [codes]
-
+                codes = codes[:] if isinstance(codes, list) else [codes]
             for idx, code in enumerate(codes):
                 try:
                     codes[idx] = data_packet(code)
@@ -290,11 +286,7 @@ class BroadlinkRemote(RemoteEntity, RestoreEntity):
             if at_least_one_sent:
                 await asyncio.sleep(delay)
 
-            if len(codes) > 1:
-                code = codes[self._flags[device]]
-            else:
-                code = codes[0]
-
+            code = codes[self._flags[device]] if len(codes) > 1 else codes[0]
             try:
                 await self._device.async_request(self._device.api.send_data, code)
             except (BroadlinkException, OSError) as err:

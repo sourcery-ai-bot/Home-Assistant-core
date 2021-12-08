@@ -53,10 +53,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up AirNow sensor entities based on a config entry."""
     coordinator = hass.data[DOMAIN][config_entry.entry_id]
 
-    sensors = []
-    for sensor in SENSOR_TYPES:
-        sensors.append(AirNowSensor(coordinator, sensor))
-
+    sensors = [AirNowSensor(coordinator, sensor) for sensor in SENSOR_TYPES]
     async_add_entities(sensors, False)
 
 

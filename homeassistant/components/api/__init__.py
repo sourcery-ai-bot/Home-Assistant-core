@@ -379,11 +379,10 @@ class APIDomainServicesView(HomeAssistantView):
         except (vol.Invalid, ServiceNotFound) as ex:
             raise HTTPBadRequest() from ex
 
-        changed_states = []
+        changed_states = [
+            state for state in hass.states.async_all() if state.context is context
+        ]
 
-        for state in hass.states.async_all():
-            if state.context is context:
-                changed_states.append(state)
 
         return self.json(changed_states)
 

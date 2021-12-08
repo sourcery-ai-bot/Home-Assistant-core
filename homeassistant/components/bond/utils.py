@@ -68,10 +68,7 @@ class BondDevice:
     def _has_any_action(self, actions: set[str]) -> bool:
         """Check to see if the device supports any of the actions."""
         supported_actions: list[str] = self._attrs["actions"]
-        for action in supported_actions:
-            if action in actions:
-                return True
-        return False
+        return any(action in actions for action in supported_actions)
 
     def supports_speed(self) -> bool:
         """Return True if this device supports any of the speed related commands."""

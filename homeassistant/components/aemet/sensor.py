@@ -106,10 +106,7 @@ class AemetForecastSensor(AbstractAemetSensor):
     @property
     def state(self):
         """Return the state of the device."""
-        forecast = None
         forecasts = self._weather_coordinator.data.get(
             FORECAST_MODE_ATTR_API[self._forecast_mode]
         )
-        if forecasts:
-            forecast = forecasts[0].get(self._sensor_type)
-        return forecast
+        return forecasts[0].get(self._sensor_type) if forecasts else None

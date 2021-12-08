@@ -138,9 +138,7 @@ class BroadlinkSP2UpdateManager(BroadlinkUpdateManager):
         """Fetch data from the device."""
         device = self.device
 
-        data = {}
-        data["pwr"] = await device.async_request(device.api.check_power)
-
+        data = {'pwr': await device.async_request(device.api.check_power)}
         if hasattr(device.api, "get_energy"):
             data["power"] = await device.async_request(device.api.get_energy)
 

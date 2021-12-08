@@ -687,9 +687,9 @@ def _recursive_merge(conf: dict[str, Any], package: dict[str, Any]) -> bool | st
                 cv.ensure_list(conf.get(key)) + cv.ensure_list(pack_conf)
             )
 
+        elif conf.get(key) is not None:
+            return key
         else:
-            if conf.get(key) is not None:
-                return key
             conf[key] = pack_conf
     return error
 

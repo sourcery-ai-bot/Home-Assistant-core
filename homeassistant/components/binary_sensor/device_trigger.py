@@ -189,11 +189,7 @@ TRIGGER_SCHEMA = TRIGGER_BASE_SCHEMA.extend(
 async def async_attach_trigger(hass, config, action, automation_info):
     """Listen for state changes based on configuration."""
     trigger_type = config[CONF_TYPE]
-    if trigger_type in TURNED_ON:
-        to_state = "on"
-    else:
-        to_state = "off"
-
+    to_state = "on" if trigger_type in TURNED_ON else "off"
     state_config = {
         state_trigger.CONF_PLATFORM: "state",
         state_trigger.CONF_ENTITY_ID: config[CONF_ENTITY_ID],

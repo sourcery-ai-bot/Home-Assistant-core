@@ -184,10 +184,7 @@ class ArloSensor(SensorEntity):
     @property
     def extra_state_attributes(self):
         """Return the device state attributes."""
-        attrs = {}
-
-        attrs[ATTR_ATTRIBUTION] = ATTRIBUTION
-        attrs["brand"] = DEFAULT_BRAND
+        attrs = {ATTR_ATTRIBUTION: ATTRIBUTION, 'brand': DEFAULT_BRAND}
 
         if self._sensor_type != "total_cameras":
             attrs["model"] = self._data.model_id

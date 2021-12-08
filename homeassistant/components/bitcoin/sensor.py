@@ -69,9 +69,10 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         currency = DEFAULT_CURRENCY
 
     data = BitcoinData()
-    dev = []
-    for variable in config[CONF_DISPLAY_OPTIONS]:
-        dev.append(BitcoinSensor(data, variable, currency))
+    dev = [
+        BitcoinSensor(data, variable, currency)
+        for variable in config[CONF_DISPLAY_OPTIONS]
+    ]
 
     add_entities(dev, True)
 
@@ -117,9 +118,9 @@ class BitcoinSensor(SensorEntity):
         """Get the latest data and updates the states."""
         self.data.update()
         stats = self.data.stats
-        ticker = self.data.ticker
-
         if self.type == "exchangerate":
+            ticker = self.data.ticker
+
             self._state = ticker[self._currency].p15min
             self._unit_of_measurement = self._currency
         elif self.type == "trade_volume_btc":

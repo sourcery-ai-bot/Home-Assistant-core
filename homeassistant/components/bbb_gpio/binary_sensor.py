@@ -33,10 +33,11 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     """Set up the Beaglebone Black GPIO devices."""
     pins = config[CONF_PINS]
 
-    binary_sensors = []
+    binary_sensors = [
+        BBBGPIOBinarySensor(pin, params) for pin, params in pins.items()
+    ]
 
-    for pin, params in pins.items():
-        binary_sensors.append(BBBGPIOBinarySensor(pin, params))
+
     add_entities(binary_sensors)
 
 

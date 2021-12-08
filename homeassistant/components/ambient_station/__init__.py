@@ -306,9 +306,7 @@ CONFIG_SCHEMA = vol.Schema(
 
 async def async_setup(hass, config):
     """Set up the Ambient PWS integration."""
-    hass.data[DOMAIN] = {}
-    hass.data[DOMAIN][DATA_CLIENT] = {}
-
+    hass.data[DOMAIN] = {DATA_CLIENT: {}}
     if DOMAIN not in config:
         return True
     conf = config[DOMAIN]

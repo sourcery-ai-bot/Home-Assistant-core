@@ -94,9 +94,9 @@ class BMWConnectedDriveSensor(BMWConnectedDriveBaseEntity, SensorEntity):
     def icon(self):
         """Icon to use in the frontend, if any."""
         vehicle_state = self._vehicle.state
-        charging_state = vehicle_state.charging_status in [ChargingState.CHARGING]
-
         if self._attribute == "charging_level_hv":
+            charging_state = vehicle_state.charging_status in [ChargingState.CHARGING]
+
             return icon_for_battery_level(
                 battery_level=vehicle_state.charging_level_hv, charging=charging_state
             )
@@ -115,8 +115,7 @@ class BMWConnectedDriveSensor(BMWConnectedDriveBaseEntity, SensorEntity):
     @property
     def unit_of_measurement(self) -> str:
         """Get the unit of measurement."""
-        unit = self._attribute_info.get(self._attribute, [None, None])[1]
-        return unit
+        return self._attribute_info.get(self._attribute, [None, None])[1]
 
     def update(self) -> None:
         """Read new state data from the library."""

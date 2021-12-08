@@ -104,11 +104,7 @@ def calculate_offset(event, offset):
     if search and search.group(1):
         time = search.group(1)
         if ":" not in time:
-            if time[0] == "+" or time[0] == "-":
-                time = f"{time[0]}0:{time[1:]}"
-            else:
-                time = f"0:{time}"
-
+            time = f"{time[0]}0:{time[1:]}" if time[0] in ["+", "-"] else f"0:{time}"
         offset_time = time_period_str(time)
         summary = (summary[: search.start()] + summary[search.end() :]).strip()
         event["summary"] = summary

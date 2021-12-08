@@ -272,8 +272,7 @@ class AdsEntity(Entity):
         """Initialize ADS binary sensor."""
         self._name = name
         self._unique_id = ads_var
-        self._state_dict = {}
-        self._state_dict[STATE_KEY_STATE] = None
+        self._state_dict = {STATE_KEY_STATE: None}
         self._ads_hub = ads_hub
         self._ads_var = ads_var
         self._event = None
@@ -287,11 +286,7 @@ class AdsEntity(Entity):
             """Handle device notifications."""
             _LOGGER.debug("Variable %s changed its value to %d", name, value)
 
-            if factor is None:
-                self._state_dict[state_key] = value
-            else:
-                self._state_dict[state_key] = value / factor
-
+            self._state_dict[state_key] = value if factor is None else value / factor
             asyncio.run_coroutine_threadsafe(async_event_set(), self.hass.loop)
             self.schedule_update_ha_state()
 
